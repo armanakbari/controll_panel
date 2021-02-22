@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'users/base.html' %}
+{% load static %}
+{% block content %}
+<br>
+<div class="row">
+    <div class="col-md">
+        <div class="card card-body">
+            <h5>Tamrins</h5>
+            <div class = card card-body>
+                <table class="table">
+                    <tr>
+                        <th>Tamrins</th>
+                    </tr>
+                    {% for i in tamrins %}
+                    <tr>
+                        <th><a href="{{ i.id }}">{{ i.name }}</a></th>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-</body>
-</html>
+
+
+{% endblock %}
