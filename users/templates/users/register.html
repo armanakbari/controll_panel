@@ -1,21 +1,36 @@
-{% extends "users/base.html" %}
+{% extends 'users/base.html' %}
+{% load static %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Join Today</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Sign Up</button>
-            </div>
+<link type="text/css" rel="stylesheet" href="{% static '/css/login_and_register.css' %}">
+<div class="container login-container">
+    <div class="row">
+        <form class="col-md-8 login-form-1" style="margin-left:auto;margin-right:auto">
+            <h3>Login Form 1</h3>
+                <div class="form-group">
+                    <p style="color:white">Username *</p>
+                    {{form.username}}
+                </div>
+                <div class="form-group">
+                    <p style="color:white">Email *</p>
+                    {{form.email}}
+                </div>
+                <div class="form-group">
+                    <p style="color:white">Password *</p>
+                    {{form.password1}}
+                </div>
+                <div class="form-group">
+                    <p style="color:white">Password Confirmation *</p>
+                    {{form.password2}}
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btnSubmit" value="Login" />
+                </div>
+                <div class="form-group">
+                    <a href="#" class="btnForgetPwd">Forget Password?</a>
+                </div>
         </form>
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
-            </small>
-        </div>
     </div>
-{% endblock content %}
+</div>
+{% endblock %}
+
+
