@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from .forms import CreateUserForm, TamrinCretae, VideoCretae, CreateAnswer
+from .forms import CreateUserForm, TamrinCretae, VideoCretae, CreateAnswer, ScoreOstad
 from .decorator import unauthenticated_user, allowed_users, admin_only
 from .models import *
 
@@ -60,7 +60,8 @@ def ostadDetailTamrin(request, tamrin_id):
     try:
         resp = Responder.objects.get(answers__id=tamrin_id)
     except Responder.DoesNotExist:
-        raise Http404("sdlkfjalsdk")
+        error = "This exercise has not been answered yet!"
+        return render(request, 'users/error.html', {'error':error})
     return render(request, 'users/tamrin_detail_ostad.html', {'tamrin': tamrin})
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['ostad'])
@@ -82,7 +83,7 @@ def ostadUpdateTamrin(request, pk):
         form = TamrinCretae(request.POST, instance=tamrin_name)
         if form.is_valid():
             form.save()
-            return redirect('../tamrin/')
+            return redirect('../')
     context = {'form':form}
     return render(request, 'users/ostad_create_tamrin.html', context)
 @login_required(login_url='login')
@@ -110,7 +111,14 @@ def createVideo(request):
 @allowed_users(allowed_roles=['ostad'])
 def tamrinCorrection(request, answer_id):
     answer = Answers.objects.get(id=answer_id)
-    return render(request, 'users/tamrin_ostad_tamrin_correction.html')
+    form = ScoreOstad(instance=answer)
+    if request.method == 'POST':
+        form = ScoreOstad(request.POST, instance=answer)
+        if form.is_valid():
+            form.save()
+            return redirect('../tamrin/')
+    context = {'form': form}
+    return render(request, 'users/tamrin_ostad_tamrin_correction.html' ,context)
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])

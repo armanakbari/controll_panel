@@ -10,6 +10,11 @@ class TamrinCretae(ModelForm):
         fields = '__all__'
 
 
+class ScoreOstad(ModelForm):
+    class Meta:
+        model = Answers
+        fields = ['score',]
+
 
 class VideoCretae(ModelForm):
     class Meta:
