@@ -3,9 +3,9 @@
 {% block content %}
 <br>
 <div class="row">
-    <div class="col-md">
-        <div class="card card-body">
-            <h5>Tamrins</h5>
+    <div class="col-md-10" style="margin-right:auto;margin-left:auto">
+        <div class="card ">
+            <h5 class="text-center card-header" style="background-color: balck">{{ name }}</h5>
             <div class = card card-body>
                 <table class="table">
                     <tr>
@@ -14,19 +14,19 @@
                         <th>Answer</th>
                         <th>score</th>
                     </tr>
-
-
                     {% for i in tamrin %}
-                    <tr>
-                        <th><a href="static '{{tamrin}}'">{{i.responder}}</a></th>
-                        <th><a href="static '{{tamrin}}'">{{i.upload_time}}</a></th>
-                        <th><a href="static '{{tamrin}}'">{{i.document}}</a></th>
-                        <th><a href="static '{{tamrin}}'">{{i.score}}</a></th>
-                    </tr>
+                        {% csrf_token %}
+                        <tr>
+                            <th>{{ i.responder }}</th>
+                            <th>{{ i.upload_time }}</th>
+                            <th><a href="../../../{{ i.document.name}}" class="btn btn-info">Download</a></th>
+                            <th>{{ i.score }}</th>
+                            <th><a href="{% url 'tamrin_detail_ostad_correction' i.id %}">correction</a></th>
+                        </tr>
                     {% endfor %}
-
-
                 </table>
+                <input type="submit" value="asign" class="btn btn-success">
+
             </div>
         </div>
     </div>

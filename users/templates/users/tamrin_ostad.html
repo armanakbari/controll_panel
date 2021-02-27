@@ -3,20 +3,19 @@
 {% block content %}
 <br>
 <div class="row">
-    <div class="col-md">
+    <div class="col-md-7" style="margin-left:auto;margin-right:auto;">
         <div class="card card-body">
-            <h5>Tamrins</h5>
+            <h5 class="text-center">Tamrins</h5>
             <div class = card card-body>
                 <table class="table">
-                    <tr>
-                        <th>Tamrins</th>
-                    </tr>
                     {% for i in tamrins %}
-                    <tr>
-                        <th><a href="{{ i.id }}">{{ i.name }}</a></th>
-                    </tr>
+                            <tr>
+                                <th><a href="{% url 'detail_tamrin_ostad' i.id %}">{{ i.name }}</a></th>
+                                <th style="text-align:end"><a href="{% url 'update_tamrin' i.id %}" class="btn btn-primary">Update</a></th>
+                            </tr>
                     {% endfor %}
                 </table>
+                <a href="{% url 'create_tamrin' %}" class="btn btn-primary btn-block"> Add </a>
             </div>
         </div>
     </div>

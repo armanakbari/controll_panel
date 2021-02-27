@@ -4,8 +4,9 @@
 <link type="text/css" rel="stylesheet" href="{% static '/css/login_and_register.css' %}">
 <div class="container login-container">
     <div class="row">
-        <form class="col-md-8 login-form-1" style="margin-left:auto;margin-right:auto">
-            <h3>Login Form 1</h3>
+        <form method="POST" class="col-md-8 login-form-1" style="margin-left:auto;margin-right:auto">
+            {% csrf_token %}
+            <h3>Registration</h3>
                 <div class="form-group">
                     <p style="color:white">Username *</p>
                     {{form.username}}
@@ -23,10 +24,11 @@
                     {{form.password2}}
                 </div>
                 <div class="form-group">
-                    <input type="submit" class="btnSubmit" value="Login" />
+                    <input type="submit" class="btnSubmit" value="Sign up" />
                 </div>
+                {{ form.error }}
                 <div class="form-group">
-                    <a href="#" class="btnForgetPwd">Forget Password?</a>
+                    <a href="{% url 'login' %}" class="btnForgetPwd">Already have an account</a>
                 </div>
         </form>
     </div>

@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'users/base.html' %}
+{% load static %}
+{% block content %}
 
-</body>
-</html>
+<br>
+<div class="row">
+    <div class="col-md-7" style="margin-left:auto;margin-right:auto;">
+        <div class="card card-body">
+            <h5 class="text-center">Tamrins</h5>
+            <div class = card card-body>
+                <table class="table">
+                    {% for i in video %}
+                            <tr>
+                                <th><a href="{% url 'detail_video_ostad' i.id %}">{{ i.caption }}</a></th>
+                            </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

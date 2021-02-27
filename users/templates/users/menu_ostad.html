@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'users/base.html' %}
+{% load static %}
+{% block content %}
+<br>
+<div class="row">
+    <div class="col-md">
+        <div class="card card-body">
 
-</body>
-</html>
+            <div class = card card-body>
+                <table class="table">
+                    <tr>
+                        <th><a href="{%url 'tamrin_ostad'%}">Exercise</a></th>
+                    </tr>
+                    <tr>
+                        <th><a href="{% url 'video_ostad' %}">Videos</a></th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

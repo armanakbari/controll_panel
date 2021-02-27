@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Responder(models.Model):  #customer
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=50, null=True)
     def __str__(self):
         return self.username
@@ -10,6 +11,7 @@ class Responder(models.Model):  #customer
 class Tamrin(models.Model):  # order
     name = models.CharField(max_length=50, null=True)
     question = models.CharField(max_length=1000, null=True)
+    deadline_tamrin = models.DateTimeField('date published')
 
     def __str__(self):
         return self.name
@@ -19,8 +21,14 @@ class Answers(models.Model):  #product
     document = models.FileField(upload_to='medias/files')
     upload_time = models.DateTimeField(auto_now_add=True)
     tamrin = models.ManyToManyField(Tamrin)
-    score = models.CharField(max_length=50, null=True)
+    score = models.CharField(max_length=50, null=True, blank=True)
+    def __str__(self):
+        return self.document.name
 
-
-
+class Vids(models.Model):
+    caption = models.CharField(max_length=300)
+    video = models.FileField(upload_to='medias/videos')
+    upload_time = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.caption
 
