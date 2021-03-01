@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from .forms import CreateUserForm, TamrinCretae, VideoCretae, CreateAnswer, ScoreOstad
+from django.forms import modelformset_factory
 from .decorator import unauthenticated_user, allowed_users, admin_only
 from .models import *
 
@@ -20,8 +21,9 @@ def registerPage(request):
 
             group = Group.objects.get(name='student')
             user.groups.add(group)
+            Responder.objects.create(user=user)
 
-            messages.success(request, 'account was created for'+ username)
+            messages.success(request, 'account was created for' + username)
             return redirect('login')
     context = {'form':form}
     return render(request, 'users/register.html', context)
@@ -43,7 +45,6 @@ def logoutUser(request):
     return redirect('login')
 
 
-
 @login_required(login_url='login')
 @admin_only
 def menuOstad(request):
@@ -57,11 +58,7 @@ def ostadTamrin(request):
 @allowed_users(allowed_roles=['ostad'])
 def ostadDetailTamrin(request, tamrin_id):
     tamrin = Answers.objects.filter(tamrin__id=tamrin_id)
-    try:
-        resp = Responder.objects.get(answers__id=tamrin_id)
-    except Responder.DoesNotExist:
-        error = "This exercise has not been answered yet!"
-        return render(request, 'users/error.html', {'error':error})
+
     return render(request, 'users/tamrin_detail_ostad.html', {'tamrin': tamrin})
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['ostad'])
@@ -116,7 +113,7 @@ def tamrinCorrection(request, answer_id):
         form = ScoreOstad(request.POST, instance=answer)
         if form.is_valid():
             form.save()
-            return redirect('../tamrin/')
+            return redirect('../')
     context = {'form': form}
     return render(request, 'users/tamrin_ostad_tamrin_correction.html' ,context)
 
@@ -129,17 +126,29 @@ def menuStudent(request):
 def studentTamrin(request):
     tamrinn = Tamrin.objects.all()
     answer = Answers.objects.all()
-    tamrinn = zip(tamrinn,answer)
-    return render(request, 'users/tamrin_student.html', {'tamrin':tamrinn, 'answer':answer})
+    tamrinn_zip = zip(tamrinn, answer)
+    tamrin_baghi = []
+    if len(tamrinn) != len(answer):
+        tamrin_baghi = tamrinn[len(answer):]
+    return render(request, 'users/tamrin_student.html', {'tamrin':tamrinn_zip, 'baghi':tamrin_baghi})
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
-def uploadAnswer(request):
-    form = CreateAnswer()
-    if request.method == 'POST':
-        form = CreateAnswer(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('../')
+def uploadAnswer(request, tamrin_id):
+    try:
+        answer = Answers.objects.get(id=tamrin_id)
+        form = CreateAnswer(instance=answer)
+        if request.method == 'POST':
+            form = CreateAnswer(request.POST, request.FILES, instance=answer)
+            if form.is_valid():
+                form.save()
+                return redirect('../')
+    except:
+        form = CreateAnswer()
+        if request.method == 'POST':
+            form = CreateAnswer(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                return redirect('../')
     context = {'form': form}
     return render(request, 'users/upload_answer.html', context)
 @login_required(login_url='login')

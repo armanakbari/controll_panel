@@ -1,21 +1,23 @@
 {% extends 'users/base.html' %}
 {% load static %}
 {% block content %}
+<link type="text/css" rel="stylesheet" href="{% static '/css/menu.css' %}">
+
 <br>
-<div class="row">
+<div class="row menu_table">
     <div class="col-md">
         <div class="card card-body">
 
-            <div class = card card-body>
-                <table class="table">
+
+                <table class="table menu_table">
                     <tr>
-                        <th><a href="{%url 'tamrin_ostad'%}">Exercise</a></th>
+                        <th><a style="color:white;" href="{%url 'tamrin_ostad'%}">Exercise</a></th>
                     </tr>
                     <tr>
-                        <th><a href="{% url 'video_ostad' %}">Videos</a></th>
+                        <th><a style="color:white;" href="{% url 'video_ostad' %}">Videos</a></th>
                     </tr>
                 </table>
-            </div>
+
         </div>
     </div>
 </div>

@@ -1,0 +1,13 @@
+.menu_table{
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+.table th, .table td{
+    background-color: #7ABB3B;
+    border
+}
+.table td a,.table th a{
+    color:white
+}

@@ -16,11 +16,9 @@ urlpatterns = [
 
     path('menu_student/', views.menuStudent, name='menu_student'),
     path('menu_student/tamrin/', views.studentTamrin, name='tamrin_student'),
-    path('menu_student/tamrin/upload/', views.uploadAnswer, name='upload_answer'),
+    path('menu_student/tamrin/upload/<int:tamrin_id>', views.uploadAnswer, name='upload_answer'),
     path('menu_student/videos', views.videoStudent, name='video_student'),
     path('menu_student/videos/<int:video_id>', views.videoDetailStudent, name='detail_video_ostad'),
-
-
 
     path('login/', views.loginPage, name='login'),
     path('logout/', views.logoutUser, name='logout'),
