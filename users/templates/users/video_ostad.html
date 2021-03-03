@@ -9,11 +9,9 @@
             <div class = card card-body>
                 <table class="table">
                     {% for video in videos %}
-                            <tr>
-                                <th><a href="{% url 'video_detail_ostad' video.id %}">{{video.caption}}</a></th>
-                            </tr>
-
-
+                        <tr>
+                            <th><a href="{% url 'video_detail_ostad' video.id %}">{{video.caption}}</a></th>
+                        </tr>
                     {% endfor %}
                 </table>
                 <a href="{% url 'create_video' %}" class="btn btn-primary btn-block"> Upload </a>

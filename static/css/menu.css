@@ -1,5 +1,5 @@
 .menu_table{
-    width: 50%;
+    width: 100%;
     margin-right: auto;
     margin-left: auto;
     text-align: center;
@@ -10,4 +10,14 @@
 }
 .table td a,.table th a{
     color:white
+}
+.tr-boxes{
+    height:300px;
+    width:300px;
+}
+.menu_table {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
 }

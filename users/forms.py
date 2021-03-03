@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 from .models import Tamrin, Answers, Vids, Responder
+from django.core.exceptions import ValidationError
+
 
 class TamrinCretae(ModelForm):
     class Meta:
@@ -16,10 +18,15 @@ class ScoreOstad(ModelForm):
         fields = ['score',]
 
 
+
+
 class VideoCretae(ModelForm):
     class Meta:
         model = Vids
         fields = ['caption', 'video']
+
+
+
 
 class CreateAnswer(ModelForm):
     responder = Responder.user

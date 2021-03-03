@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import os
 class Responder(models.Model):  #customer
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=50, null=True)
@@ -28,6 +28,10 @@ class Vids(models.Model):
     caption = models.CharField(max_length=300)
     video = models.FileField(upload_to='videos')
     upload_time = models.DateTimeField(auto_now_add=True)
+    def filename(self):
+        return os.path.basename(self.video.name)
+
     def __str__(self):
         return self.caption
+
 

@@ -6,30 +6,41 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from .forms import CreateUserForm, TamrinCretae, VideoCretae, CreateAnswer, ScoreOstad
-from django.forms import modelformset_factory
+from django.views import View
+from django.utils.decorators import method_decorator
 from .decorator import unauthenticated_user, allowed_users, admin_only
 from .models import *
 
-@unauthenticated_user
-def registerPage(request):
-    form = CreateUserForm()
-    if request.method == 'POST':
+
+
+class RegisterPage(View):
+    @method_decorator(unauthenticated_user)
+    def get(self, request):
+        form = CreateUserForm()
+        context = {'form':form}
+        return render(request, 'users/register.html', context)
+
+    @method_decorator(unauthenticated_user)
+    def post(self, request, *args, **kwargs):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-
             group = Group.objects.get(name='student')
             user.groups.add(group)
             Responder.objects.create(user=user)
-
             messages.success(request, 'account was created for' + username)
             return redirect('login')
-    context = {'form':form}
-    return render(request, 'users/register.html', context)
-@unauthenticated_user
-def loginPage(request):
-    if request.method == 'POST':
+        context = {'form': form}
+        return render(request, 'users/register.html', context)
+class LoginPage(View):
+    @method_decorator(unauthenticated_user)
+    def get(self,request, *args, **kwargs):
+        context = {}
+        return render(request, 'users/login.html', context)
+
+    @method_decorator(unauthenticated_user)
+    def post(self,request, *args, **kwargs):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
@@ -38,132 +49,176 @@ def loginPage(request):
             return redirect('menu_ostad')
         else:
             messages.info(request, 'username or password was wrong')
-    context = {}
-    return render(request, 'users/login.html', context)
-def logoutUser(request):
-    logout(request)
-    return redirect('login')
+class LogoutUser(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login')
 
-
-@login_required(login_url='login')
-@admin_only
-def menuOstad(request):
-    return render(request, 'users/menu_ostad.html')
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def ostadTamrin(request):
-    tamrins = Tamrin.objects.all()
-    return render(request, 'users/tamrin_ostad.html', {'tamrins':tamrins})
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def ostadDetailTamrin(request, tamrin_id):
-    tamrin = Answers.objects.filter(tamrin__id=tamrin_id)
-
-    return render(request, 'users/tamrin_detail_ostad.html', {'tamrin': tamrin})
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def ostadCreateTamrin(request):
-    form = TamrinCretae()
-    if request.method == 'POST':
+class MenuOstad(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(admin_only)
+    def get(self,request):
+        return render(request, 'users/menu_ostad.html')
+class OstadTamrin(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request):
+        tamrins = Tamrin.objects.all()
+        return render(request, 'users/tamrin_ostad.html', {'tamrins':tamrins})
+class OstadDetailTamrin(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request, tamrin_id):
+        tamrin = Answers.objects.filter(tamrin__id=tamrin_id)
+        return render(request, 'users/tamrin_detail_ostad.html', {'tamrin': tamrin})
+class OstadCreateTamrin(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request):
+        form = TamrinCretae()
+        context = {'form': form}
+        return render(request, 'users/ostad_create_tamrin.html', context)
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def post(self, request):
         form = TamrinCretae(request.POST)
         if form.is_valid():
             form.save()
             return redirect('../menu_ostad/tamrin/')
-    context = {'form': form}
-    return render(request, 'users/ostad_create_tamrin.html', context)
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def ostadUpdateTamrin(request, pk):
-    tamrin_name = Tamrin.objects.get(id=pk)
-    form = TamrinCretae(instance=tamrin_name)
-    if request.method == 'POST':
+        context = {'form': form}
+        return render(request, 'users/ostad_create_tamrin.html', context)
+class OstadUpdateTamrin(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request, pk):
+        tamrin_name = Tamrin.objects.get(id=pk)
+        form = TamrinCretae(instance=tamrin_name)
+        context = {'form':form}
+        return render(request, 'users/ostad_create_tamrin.html', context)
+
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def post(self, request, pk):
+        tamrin_name = Tamrin.objects.get(id=pk)
         form = TamrinCretae(request.POST, instance=tamrin_name)
         if form.is_valid():
             form.save()
             return redirect('../')
-    context = {'form':form}
-    return render(request, 'users/ostad_create_tamrin.html', context)
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def videoOstadDetail(request, video_id):
-    vid = Vids.objects.get(id=video_id)
-    return render(request, 'users/video_detail_ostad.html', {'video':vid})
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def videoOstad(request):
-    video = Vids.objects.all()
-    return render(request, 'users/video_ostad.html', {'videos': video})
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def createVideo(request):
-    form = VideoCretae()
-    if request.method == 'POST':
+        context = {'form': form}
+        return render(request, 'users/ostad_create_tamrin.html', context)
+class VideoOstadDetail(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request, video_id):
+        vid = Vids.objects.get(id=video_id)
+        return render(request, 'users/video_detail_ostad.html', {'video':vid})
+class VideoOstad(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request):
+        video = Vids.objects.all()
+        return render(request, 'users/video_ostad.html', {'videos': video})
+class CreateVideo(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request):
+        form = VideoCretae()
+        context = {'form':form}
+        return render(request, 'users/create_video.html', context)
+
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def post(self, request):
         form = VideoCretae(request.POST, request.FILES)
+        name = request.FILES['video'].name
         if form.is_valid():
-            form.save()
-            return redirect('../videos/')
-    context = {'form':form}
-    return render(request, 'users/create_video.html', context)
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['ostad'])
-def tamrinCorrection(request, answer_id):
-    answer = Answers.objects.get(id=answer_id)
-    form = ScoreOstad(instance=answer)
-    if request.method == 'POST':
+            if "mp4" in name:
+                form.save()
+                return redirect('../videos/')
+            else:
+                messages.info(request, 'you should upload a mp4 file')
+        context = {'form': form}
+        return render(request, 'users/create_video.html', context)
+class TamrinCorrection(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def get(self, request, answer_id):
+        answer = Answers.objects.get(id=answer_id)
+        form = ScoreOstad(instance=answer)
+        context = {'form': form}
+        return render(request, 'users/tamrin_ostad_tamrin_correction.html' ,context)
+
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['ostad']))
+    def post(self, request, answer_id):
+        answer = Answers.objects.get(id=answer_id)
         form = ScoreOstad(request.POST, instance=answer)
         if form.is_valid():
             form.save()
             return redirect('../')
-    context = {'form': form}
-    return render(request, 'users/tamrin_ostad_tamrin_correction.html' ,context)
+        context = {'form': form}
+        return render(request, 'users/tamrin_ostad_tamrin_correction.html', context)
 
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['student'])
-def menuStudent(request):
-    return render(request, 'users/menu_student.html')
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['student'])
-def studentTamrin(request):
-    tamrinn = Tamrin.objects.all()
-    answer = Answers.objects.all()
-    tamrinn_zip = zip(tamrinn, answer)
-    tamrin_baghi = []
-    if len(tamrinn) != len(answer):
-        tamrin_baghi = tamrinn[len(answer):]
-    return render(request, 'users/tamrin_student.html', {'tamrin':tamrinn_zip, 'baghi':tamrin_baghi})
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['student'])
-def uploadAnswer(request, tamrin_id):
-    try:
-        answer = Answers.objects.get(id=tamrin_id)
-        form = CreateAnswer(instance=answer)
-        if request.method == 'POST':
+class MenuStudent(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['student']))
+    def get(self, request):
+        return render(request, 'users/menu_student.html')
+class StudentTamrin(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['student']))
+    def get(self, request):
+        tamrinn = Tamrin.objects.all()
+        answer = Answers.objects.all()
+        tamrinn_zip = zip(tamrinn, answer)
+        tamrin_baghi = []
+        if len(tamrinn) != len(answer):
+            tamrin_baghi = tamrinn[len(answer):]
+        return render(request, 'users/tamrin_student.html', {'tamrin':tamrinn_zip, 'baghi':tamrin_baghi})
+class UploadAnswer(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['student']))
+    def get(self, request, tamrin_id):
+        try:
+            answer = Answers.objects.get(id=tamrin_id)
+            form = CreateAnswer(instance=answer)
+        except:
+            form = CreateAnswer()
+        context = {'form': form}
+        return render(request, 'users/upload_answer.html', context)
+
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['student']))
+    def post(self, request, tamrin_id):
+        try:
+            answer = Answers.objects.get(id=tamrin_id)
             form = CreateAnswer(request.POST, request.FILES, instance=answer)
             if form.is_valid():
                 form.save()
                 return redirect('../')
-    except:
-        form = CreateAnswer()
-        if request.method == 'POST':
+        except:
             form = CreateAnswer(request.POST, request.FILES)
             if form.is_valid():
                 form.save()
                 return redirect('../')
-    context = {'form': form}
-    return render(request, 'users/upload_answer.html', context)
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['student'])
-def videoStudent(request):
-    video = Vids.objects.all()
-    context = {'video':video}
-    return render(request, 'users/video_student.html', context)
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['student'])
-def videoDetailStudent(request, video_id):
-    video = Vids.objects.get(id=video_id)
-    return render(request, 'users/video_detail_student.html', {'video':video})
+        context = {'form': form}
+        return render(request, 'users/upload_answer.html', context)
+class VideoStudent(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['student']))
+    def get(self, request):
+        video = Vids.objects.all()
+        context = {'video':video}
+        return render(request, 'users/video_student.html', context)
+class VideoDetailStudent(View):
+    @method_decorator(login_required(login_url='login'))
+    @method_decorator(allowed_users(allowed_roles=['student']))
+    def get(self, request, video_id):
+        video = Vids.objects.get(id=video_id)
+        return render(request, 'users/video_detail_student.html', {'video':video})
 
-def home(request):
-    return render(request, 'users/index.html')
+class Home(View):
+    def get(self, request):
+        return render(request, 'users/index.html')
 
 
