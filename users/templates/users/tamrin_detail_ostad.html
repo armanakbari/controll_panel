@@ -14,14 +14,24 @@
                         <th>Answer</th>
                         <th>score</th>
                     </tr>
-                        {% for i in tamrin %}
-                            <tr>
-                                <th>{{ i.responder }}</th>
-                                <th>{{ i.upload_time }}</th>
-                                <th><a href="../../../medias/{{ i.document.name }}" class="btn btn-info">Download</a></th>
-                                <th>{{ i.score }}</th>
-                                <th><a href="{% url 'tamrin_detail_ostad_correction' i.id %}">correction</a></th>
-                            </tr>
+                        {% for j,i in tamrin %}
+                            {% if i != 0 %}
+                                <tr>
+                                    <th>{{ i.responder }}</th>
+                                    <th>{{ i.upload_time }}</th>
+                                    <th><a href="../../../medias/{{ i.document.name }}" class="btn btn-info">Download</a></th>
+                                    <th>{{ i.score }}</th>
+                                    <th><a href="{% url 'tamrin_detail_ostad_correction' i.id %}">correction</a></th>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <th>{{ j.username }}</th>
+                                    <th>-</th>
+                                    <th>Download</th>
+                                    <th>-</th>
+                                    <th>correction</th>
+                                </tr>
+                            {% endif%}
                         {% endfor %}
                 </table>
                 <input type="submit" value="asign" class="btn btn-success">

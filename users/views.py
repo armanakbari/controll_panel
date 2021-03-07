@@ -78,8 +78,20 @@ class OstadDetailTamrin(View):
     @method_decorator(login_required(login_url='login'))
     @method_decorator(allowed_users(allowed_roles=['ostad']))
     def get(self, request, tamrin_id):
-        tamrin = Answers.objects.filter(tamrin__id=tamrin_id)
-        return render(request, 'users/tamrin_detail_ostad.html', {'tamrin': tamrin})
+        #tamrin = Answers.objects.filter(tamrin__id=tamrin_id)
+
+        resp = Responder.objects.all()
+
+        tmp = []
+        for i in resp:
+            try:
+                g = Answers.objects.get(responder__id=i.id, tamrin__id=tamrin_id)
+                tmp.append([i, g])
+            except:
+                g = 0
+                tmp.append([i, g])
+
+        return render(request, 'users/tamrin_detail_ostad.html', {'tamrin':tmp})
 class OstadCreateTamrin(View):
     @method_decorator(login_required(login_url='login'))
     @method_decorator(allowed_users(allowed_roles=['ostad']))
