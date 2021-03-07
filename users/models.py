@@ -5,7 +5,7 @@ class Responder(models.Model):  #customer
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=50, null=True)
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 
 class Tamrin(models.Model):  # order
@@ -16,13 +16,14 @@ class Tamrin(models.Model):  # order
         return self.name
 
 class Answers(models.Model):  #product
-    responder = models.ForeignKey(Responder, null=True, on_delete= models.SET_NULL)
+    responder = models.ForeignKey(Responder, null=True, on_delete=models.SET_NULL)
     document = models.FileField(upload_to='files/', null=True)
     upload_time = models.DateTimeField(auto_now_add=True)
     tamrin = models.ManyToManyField(Tamrin)
     score = models.CharField(max_length=50, null=True, blank=True)
+
     def __str__(self):
-        return self.document.name
+       return self.document.name
 
 class Vids(models.Model):
     caption = models.CharField(max_length=300)

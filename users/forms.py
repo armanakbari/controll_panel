@@ -17,23 +17,16 @@ class ScoreOstad(ModelForm):
         model = Answers
         fields = ['score',]
 
-
-
-
 class VideoCretae(ModelForm):
     class Meta:
         model = Vids
         fields = ['caption', 'video']
 
-
-
-
 class CreateAnswer(ModelForm):
     responder = Responder.user
     class Meta:
         model = Answers
-        fields = ['responder', 'tamrin', 'document']
-
+        fields = ['responder', 'tamrin', 'document',]
 
 class CreateUserForm(UserCreationForm):
     class Meta:

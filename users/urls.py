@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
 from .views import Home, MenuOstad,OstadTamrin,VideoOstad,VideoOstadDetail,CreateVideo,OstadDetailTamrin,OstadCreateTamrin,OstadUpdateTamrin,TamrinCorrection,MenuStudent,StudentTamrin, UploadAnswer, VideoStudent, VideoDetailStudent, LoginPage, LogoutUser, RegisterPage
+
+
+
+
 urlpatterns = [
     path('', Home.as_view(), name='home'),
 
@@ -23,4 +27,6 @@ urlpatterns = [
     path('login/', LoginPage.as_view(), name='login'),
     path('logout/', LogoutUser.as_view(), name='logout'),
     path('register/', RegisterPage.as_view(), name='register'),
+
+
 ]

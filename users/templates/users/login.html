@@ -13,6 +13,10 @@
                     <input style="display: block;width: 100%;padding: .375rem .75rem;font-size: 1rem;line-height: 1.5;color: #495057;background-color: #fff;background-clip: padding-box;border: 1px solid #ced4da;border-radius: .25rem;transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;" type="text" name="username">
                 </div>
                 <div class="form-group">
+                    <p style="color:white">Email *</p>
+                    <input style="display: block;width: 100%;padding: .375rem .75rem;font-size: 1rem;line-height: 1.5;color: #495057;background-color: #fff;background-clip: padding-box;border: 1px solid #ced4da;border-radius: .25rem;transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;" type="text" name="email">
+                </div>
+                <div class="form-group">
                     <p style="color:white">Password *</p>
                     <input style="display: block;width: 100%;padding: .375rem .75rem;font-size: 1rem;line-height: 1.5;color: #495057;background-color: #fff;background-clip: padding-box;border: 1px solid #ced4da;border-radius: .25rem;transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;" class="login_input_style" type="password" name="password">
                 </div>
@@ -20,7 +24,7 @@
                     <input  type="submit" class="btnSubmit" value="Login" />
                 </div>
                 {% for message in messages %}
-                    <p id="messages" style="color:white">{{ message }}</p>
+                    <p id="messages" style="color:red">{{ message }}</p>
                 {% endfor %}
                 <div class="form-group">
                     <a href="{% url 'register' %}" class="btnForgetPwd">Need an account?</a>

@@ -2,7 +2,13 @@
 {% load static %}
 {% block content %}
 <link type="text/css" rel="stylesheet" href="{% static '/css/menu.css' %}">
-
+<style>
+    .table th, .table td {
+    background-color: #7ABB3B;
+    border: ;
+    vertical-align: middle;
+}
+</style>
 <br>
 <div class="row menu_table">
     <div class="col-md">
@@ -10,7 +16,6 @@
 
                 <table class="table">
                     <tr>
-
                         <th class="menu_th"><a style="color:white;" href="{% url 'tamrin_student' %}">Exercise</a></th>
                     </tr>
                     <tr>

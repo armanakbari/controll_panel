@@ -14,13 +14,22 @@
                         <th>Answer</th>
                         <th>score</th>
                     </tr>
-                    {% for i,j in tamrin %}
-                        <tr>
-                            <th>{{ i.name }}</th>
-                            <th>{{ j.upload_time }}</th>
-                            <th><a href="{% url 'upload_answer' j.id %}" class="btn btn-info">Upload</a></th>
-                            <th>{{ j.score }}</th>
-                        </tr>
+                    {% for i,j in answer %}
+                        {% if j != 0 %}
+                            <tr>
+                                <th>{{ i.name }}</th>
+                                <th>{{ j.upload_time }}</th>
+                                <th><a href="{% url 'upload_answer' i.id %}" class="btn btn-info">Upload</a></th>
+                                <th>{{ j.score }}</th>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th>{{ i.name }}</th>
+                                <th> -</th>
+                                <th><a href="{% url 'upload_answer' i.id %}" class="btn btn-info">Upload</a></th>
+                                <th> - </th>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                     {% for i in baghi %}
                         <tr>

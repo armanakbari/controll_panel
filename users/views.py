@@ -43,12 +43,19 @@ class LoginPage(View):
     def post(self,request, *args, **kwargs):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        email = request.POST.get('email')
+        user = authenticate(request, username=username, password=password, email=email)
         if user is not None:
             login(request, user)
-            return redirect('menu_ostad')
+            gr = request.user.groups.all()[0].name
+            if gr == 'student':
+                return redirect('menu_student')
+            elif gr == 'ostad':
+                return redirect('menu_ostad')
         else:
             messages.info(request, 'username or password was wrong')
+            context = {}
+            return render(request, 'users/login.html', context)
 class LogoutUser(View):
     def get(self, request):
         logout(request)
@@ -58,6 +65,8 @@ class MenuOstad(View):
     @method_decorator(login_required(login_url='login'))
     @method_decorator(admin_only)
     def get(self,request):
+        return render(request, 'users/menu_ostad.html')
+    def post(self,request):
         return render(request, 'users/menu_ostad.html')
 class OstadTamrin(View):
     @method_decorator(login_required(login_url='login'))
@@ -132,7 +141,7 @@ class CreateVideo(View):
         form = VideoCretae(request.POST, request.FILES)
         name = request.FILES['video'].name
         if form.is_valid():
-            if "mp4" in name:
+            if ".mp4" in name:
                 form.save()
                 return redirect('../videos/')
             else:
@@ -170,11 +179,17 @@ class StudentTamrin(View):
     def get(self, request):
         tamrinn = Tamrin.objects.all()
         answer = Answers.objects.all()
-        tamrinn_zip = zip(tamrinn, answer)
-        tamrin_baghi = []
-        if len(tamrinn) != len(answer):
-            tamrin_baghi = tamrinn[len(answer):]
-        return render(request, 'users/tamrin_student.html', {'tamrin':tamrinn_zip, 'baghi':tamrin_baghi})
+        tmp = []
+        for i in tamrinn:
+            try:
+                r = request.user.responder.id
+                g = Answers.objects.get(tamrin__id=i.id, responder__id=r)
+                tmp.append([i,g])
+            except:
+                g = 0
+                tmp.append([i, g])
+
+        return render(request, 'users/tamrin_student.html', {'answer':tmp})
 class UploadAnswer(View):
     @method_decorator(login_required(login_url='login'))
     @method_decorator(allowed_users(allowed_roles=['student']))
@@ -184,7 +199,8 @@ class UploadAnswer(View):
             form = CreateAnswer(instance=answer)
         except:
             form = CreateAnswer()
-        context = {'form': form}
+        tam = Tamrin.objects.get(id=tamrin_id)
+        context = {'form': form, 'tamrin':tam}
         return render(request, 'users/upload_answer.html', context)
 
     @method_decorator(login_required(login_url='login'))
@@ -201,7 +217,8 @@ class UploadAnswer(View):
             if form.is_valid():
                 form.save()
                 return redirect('../')
-        context = {'form': form}
+        tam = Tamrin.objects.get(id=tamrin_id)
+        context = {'form': form, 'tamrin': tam}
         return render(request, 'users/upload_answer.html', context)
 class VideoStudent(View):
     @method_decorator(login_required(login_url='login'))
@@ -221,4 +238,6 @@ class Home(View):
     def get(self, request):
         return render(request, 'users/index.html')
 
+def handler(request, exception):
+    return render(request, 'users/404.html')
 
